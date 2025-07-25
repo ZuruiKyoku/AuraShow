@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -62,6 +63,9 @@ fun MainScreen(
     var showTestPopup by remember { mutableStateOf(false) }
     var isTestingWeather by remember { mutableStateOf(false) }
     var selectedTestWeather by remember { mutableStateOf("Thunderstorm") }
+    var nextTrigger by remember { mutableStateOf(false) }
+    var prevTrigger by remember { mutableStateOf(false) }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (imageUris.isNotEmpty()) {
@@ -69,7 +73,13 @@ fun MainScreen(
                 imageUris = imageUris,
                 slideDurationMillis = slideDuration,
                 fitMode = imageFitMode,
-                transitionType = transitionType
+                transitionType = transitionType,
+                nextTrigger = nextTrigger,
+                prevTrigger = prevTrigger,
+                onTriggerConsumed = {
+                    nextTrigger = false
+                    prevTrigger = false
+                }
             )
         }
 
@@ -120,7 +130,35 @@ fun MainScreen(
                 }
             }
 
-            Column(
+                // Prev/Next buttons vertically centered, full height
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Button(
+                            onClick = { prevTrigger = true },
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                        ) {
+                            Text("Previous")
+                        }
+
+                        Button(
+                            onClick = { nextTrigger = true },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                        ) {
+                            Text("Next")
+                        }
+                    }
+                }
+
+                Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 48.dp),

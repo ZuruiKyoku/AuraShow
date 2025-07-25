@@ -28,7 +28,7 @@ fun TransitionEffect(
     Box(
         modifier = modifier
             .clipToBounds()
-            .background(Color.Black)
+            //.background(Color.Black)
     ) {
 
         // Show appropriate base image

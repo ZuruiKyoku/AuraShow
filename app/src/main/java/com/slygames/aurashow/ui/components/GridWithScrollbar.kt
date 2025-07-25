@@ -1,17 +1,13 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -19,10 +15,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GridWithScrollbar(
     state: LazyGridState,
-    containerHeightDp: Float = 200f,
     content: @Composable () -> Unit
 ) {
-    Box {
+    var containerHeightPx by remember { mutableStateOf(1) } // prevent divide-by-zero
+    val density = LocalDensity.current
+
+    Box(
+        modifier = Modifier
+            .onSizeChanged { containerHeightPx = it.height }
+    ) {
         content()
 
         val showScrollbar by remember {
@@ -31,16 +32,29 @@ fun GridWithScrollbar(
             }
         }
 
-        if (showScrollbar) {
+        if (showScrollbar && containerHeightPx > 0) {
             val scrollProgress by remember {
                 derivedStateOf {
                     val firstVisible = state.firstVisibleItemIndex
                     val totalItems = state.layoutInfo.totalItemsCount
-                    firstVisible / (totalItems.toFloat() - 1).coerceAtLeast(1f)
+                    val visibleItems = state.layoutInfo.visibleItemsInfo.size
+
+                    val scrollRange = totalItems - visibleItems
+                    if (scrollRange <= 0) 0f else firstVisible / scrollRange.toFloat()
                 }
             }
 
-            val density = LocalDensity.current // ✅ Valid usage here
+            val thumbHeightFraction = remember {
+                derivedStateOf {
+                    val totalItems = state.layoutInfo.totalItemsCount.toFloat()
+                    val visibleItems = state.layoutInfo.visibleItemsInfo.size.toFloat().coerceAtLeast(1f)
+                    (visibleItems / totalItems).coerceIn(0.05f, 1f)
+                }
+            }.value
+
+            val thumbHeightPx = (containerHeightPx * thumbHeightFraction).toInt()
+            val maxOffsetPx = containerHeightPx - thumbHeightPx
+            val offsetPx = (scrollProgress * maxOffsetPx).toInt()
 
             // Track
             Box(
@@ -54,13 +68,10 @@ fun GridWithScrollbar(
             // Thumb
             Box(
                 modifier = Modifier
-                    .fillMaxHeight(fraction = 0.2f)
+                    .height((thumbHeightPx / density.density).dp)
                     .width(4.dp)
                     .align(Alignment.TopEnd)
-                    .offset {
-                        val offsetPx = (scrollProgress * containerHeightDp * density.density).toInt()
-                        IntOffset(0, offsetPx)
-                    }
+                    .offset { IntOffset(0, offsetPx) }
                     .background(Color.White, shape = RoundedCornerShape(2.dp))
             )
         }

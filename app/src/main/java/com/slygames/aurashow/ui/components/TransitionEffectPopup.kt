@@ -32,111 +32,124 @@ fun TransitionEffectPopup(
     onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            tonalElevation = 4.dp,
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+                .width(600.dp)
+                .heightIn(max = 700.dp)
         ) {
-            var selected by remember { mutableStateOf(currentSelection) }
-            var transitionDuration by remember { mutableStateOf(1.5f) }
-            var playTrigger by remember { mutableStateOf(false) }
-
-            val image1 = painterResource(id = R.drawable.sample_preview)
-            val image2 = painterResource(id = R.drawable.sample_preview_2)
-            val image3 = painterResource(id = R.drawable.sample_preview_3)
-            val image4 = painterResource(id = R.drawable.sample_preview_4)
-
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                tonalElevation = 4.dp,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text("Select Transition Effect", style = MaterialTheme.typography.titleMedium)
+                var selected by remember { mutableStateOf(currentSelection) }
+                var transitionDuration by remember { mutableStateOf(1.5f) }
+                var playTrigger by remember { mutableStateOf(false) }
 
-                PreviewBox(
-                    fitMode = fitMode,
-                    transitionType = selected,
-                    durationSeconds = transitionDuration,
-                    playTrigger = playTrigger,
-                    onAnimationEnd = { playTrigger = false },
-                    images = listOf(image1, image2, image3, image4)
-                )
+                val image1 = painterResource(id = R.drawable.sample_preview)
+                val image2 = painterResource(id = R.drawable.sample_preview_2)
+                val image3 = painterResource(id = R.drawable.sample_preview_3)
+                val image4 = painterResource(id = R.drawable.sample_preview_4)
 
-                IconButton(
-                    onClick = { playTrigger = true },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Play",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Duration: ${"%.1f".format(transitionDuration)}s")
-                    Slider(
-                        value = transitionDuration,
-                        onValueChange = { transitionDuration = it },
-                        valueRange = 1f..3f,
-                        steps = 19
-                    )
-                }
-
-                val gridState = rememberLazyGridState()
-
-                GridWithScrollbar(state = gridState, containerHeightDp = 200f) {
-                    LazyVerticalGrid(
-                        state = gridState,
-                        columns = GridCells.Adaptive(100.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    Column(
                         modifier = Modifier
-                            .height(200.dp)
-                            .padding(top = 8.dp)
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(TransitionType.entries.toList()) { type ->
-                            val isSelected = type == selected
-                            Box(
+                        Text("Select Transition Effect", style = MaterialTheme.typography.titleMedium)
+
+                        PreviewBox(
+                            fitMode = fitMode,
+                            transitionType = selected,
+                            durationSeconds = transitionDuration,
+                            playTrigger = playTrigger,
+                            onAnimationEnd = { playTrigger = false },
+                            images = listOf(image1, image2, image3, image4)
+                        )
+
+                        IconButton(
+                            onClick = { playTrigger = true },
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Play",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Duration: ${"%.1f".format(transitionDuration)}s")
+                            Slider(
+                                value = transitionDuration,
+                                onValueChange = { transitionDuration = it },
+                                valueRange = 1f..3f,
+                                steps = 19
+                            )
+                        }
+
+                        val gridState = rememberLazyGridState()
+
+                        GridWithScrollbar(state = gridState) {
+                            LazyVerticalGrid(
+                                state = gridState,
+                                columns = GridCells.Adaptive(100.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                                    .background(
-                                        if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                                        else MaterialTheme.colorScheme.surfaceVariant,
-                                        shape = MaterialTheme.shapes.small
-                                    )
-                                    .clickable {
-                                        selected = type
-                                        playTrigger = true
-                                    }
-                                    .padding(8.dp)
+                                    .height(200.dp)
+                                    .padding(top = 8.dp)
                             ) {
-                                Text(
-                                    text = type.displayName,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
+                                items(TransitionType.entries.toList()) { type ->
+                                    val isSelected = type == selected
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(4.dp)
+                                            .background(
+                                                if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                                                else MaterialTheme.colorScheme.surfaceVariant,
+                                                shape = MaterialTheme.shapes.small
+                                            )
+                                            .clickable {
+                                                selected = type
+                                                playTrigger = true
+                                            }
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(
+                                            text = type.displayName,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("Cancel")
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = {
-                        onApply(selected)
-                        onDismiss()
-                    }) {
-                        Text("Apply")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = onDismiss) {
+                            Text("Cancel")
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(onClick = {
+                            onApply(selected)
+                            onDismiss()
+                        }) {
+                            Text("Apply")
+                        }
                     }
                 }
             }

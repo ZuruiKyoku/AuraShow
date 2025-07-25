@@ -20,54 +20,96 @@ fun Slideshow(
     imageUris: List<Uri>,
     slideDurationMillis: Long = 5000L,
     fitMode: FitModeNames,
-    transitionType: TransitionType
+    transitionType: TransitionType,
+    nextTrigger: Boolean,
+    prevTrigger: Boolean,
+    onTriggerConsumed: () -> Unit
 ) {
-    var currentIndex by remember { mutableStateOf(0) }
+    if (imageUris.isEmpty()) return
+
     var order by remember(imageUris) { mutableStateOf(imageUris.shuffled()) }
-    var showAlt by remember { mutableStateOf(false) }
+    var currentIndex by remember { mutableStateOf(0) }
+    var isAnimating by remember { mutableStateOf(false) }
+
     val progress = remember { Animatable(1f) }
+    val durationMillis = 1000
 
-    val imageFrom = order.getOrNull(currentIndex)
-    val imageTo = order.getOrNull((currentIndex + 1) % order.size)
+    var fromUri by remember { mutableStateOf(order[currentIndex]) }
+    var toUri by remember { mutableStateOf(order[(currentIndex + 1) % order.size]) }
 
-    val painterFrom = rememberAsyncImagePainter(model = imageFrom)
-    val painterTo = rememberAsyncImagePainter(model = imageTo)
+    val fromPainter = rememberAsyncImagePainter(model = fromUri)
+    val toPainter = rememberAsyncImagePainter(model = toUri)
 
+    fun getWrappedIndex(offset: Int): Int {
+        val size = order.size
+        return (currentIndex + offset + size) % size
+    }
+
+    // Automatic slideshow
     LaunchedEffect(order, slideDurationMillis) {
         while (true) {
-            progress.snapTo(0f)
-            progress.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000)
-            )
-            delay(slideDurationMillis - 1000) // account for animation time
-            currentIndex = (currentIndex + 1) % order.size
+            delay(slideDurationMillis - durationMillis)
+            if (!isAnimating) {
+                isAnimating = true
+                fromUri = order[getWrappedIndex(0)]
+                toUri = order[getWrappedIndex(1)]
+                progress.snapTo(0f)
+                progress.animateTo(1f, tween(durationMillis))
+                currentIndex = getWrappedIndex(1)
+                isAnimating = false
+            }
         }
     }
 
-    if (imageFrom != null && imageTo != null) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Background with same transition (optional)
-            TransitionEffect(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .blur(32.dp),
-                fitMode = fitMode,
-                transitionType = transitionType,
-                progress = progress.value,
-                from = painterFrom,
-                to = painterTo,
-            )
-
-            // Foreground main image with selected fit mode
-            TransitionEffect(
-                modifier = Modifier.fillMaxSize(),
-                fitMode = fitMode,
-                transitionType = transitionType,
-                progress = progress.value,
-                from = painterFrom,
-                to = painterTo,
-            )
+    // Manual next
+    LaunchedEffect(nextTrigger) {
+        if (nextTrigger && !isAnimating) {
+            isAnimating = true
+            fromUri = order[getWrappedIndex(0)]
+            toUri = order[getWrappedIndex(1)]
+            progress.snapTo(0f)
+            progress.animateTo(1f, tween(durationMillis))
+            currentIndex = getWrappedIndex(1)
+            isAnimating = false
+            onTriggerConsumed()
         }
+    }
+
+    // Manual previous
+    LaunchedEffect(prevTrigger) {
+        if (prevTrigger && !isAnimating) {
+            isAnimating = true
+            fromUri = order[getWrappedIndex(0)]
+            toUri = order[getWrappedIndex(-1)]
+            progress.snapTo(0f)
+            progress.animateTo(1f, tween(durationMillis))
+            currentIndex = getWrappedIndex(-1)
+            isAnimating = false
+            onTriggerConsumed()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background blurred layer
+        TransitionEffect(
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(32.dp),
+            fitMode = fitMode,
+            transitionType = transitionType,
+            progress = if (isAnimating) progress.value else 1f,
+            from = fromPainter,
+            to = toPainter
+        )
+
+        // Foreground main transition
+        TransitionEffect(
+            modifier = Modifier.fillMaxSize(),
+            fitMode = fitMode,
+            transitionType = transitionType,
+            progress = if (isAnimating) progress.value else 1f,
+            from = fromPainter,
+            to = toPainter
+        )
     }
 }
