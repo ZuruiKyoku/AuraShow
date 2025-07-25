@@ -174,6 +174,8 @@ fun SlideDurationSelector(
     val options = listOf(1f, 2f, 3f, 4f, 5f) // minutes
     val minSeconds = 5f
     val maxSeconds = 300f
+    val stepSize = 5f
+    val steps = ((maxSeconds - minSeconds) / stepSize).toInt() - 1
 
     val displayTime = remember(selectedDuration) {
         val minutes = selectedDuration.toInt() / 60
@@ -192,9 +194,12 @@ fun SlideDurationSelector(
         // Slider for fine tuning
         Slider(
             value = selectedDuration,
-            onValueChange = { onDurationSelected(it) },
+            onValueChange = {
+                val snapped = (it / stepSize).roundToInt() * stepSize
+                onDurationSelected(snapped.coerceIn(minSeconds, maxSeconds))
+            },
             valueRange = minSeconds..maxSeconds,
-            steps = ((maxSeconds - minSeconds) / 5).toInt() - 1,
+            steps = steps,
             modifier = Modifier.fillMaxWidth()
         )
 

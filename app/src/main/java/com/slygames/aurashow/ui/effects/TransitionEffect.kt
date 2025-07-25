@@ -4,12 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.slygames.aurashow.model.TransitionType
@@ -25,11 +30,18 @@ fun TransitionEffect(
     from: Painter,
     to: Painter
 ) {
+    var containerWidth by remember { mutableStateOf(0) }
+    var containerHeight by remember { mutableStateOf(0) }
+
     Box(
         modifier = modifier
             .clipToBounds()
-            //.background(Color.Black)
-    ) {
+            .background(Color.Black)
+            .onSizeChanged {
+                containerWidth = it.width
+                containerHeight = it.height
+            }
+    ){
 
         // Show appropriate base image
         val basePainter = if (progress < 1f) from else to
@@ -59,7 +71,7 @@ fun TransitionEffect(
                         contentScale = fitMode.scale,
                         modifier = Modifier
                             .matchParentSize()
-                            .graphicsLayer(translationX = (1f - progress) * 1000f)
+                            .graphicsLayer(translationX = (1f - progress) * containerWidth)
                     )
                 }
                 TransitionType.SlideRight -> {
@@ -69,7 +81,7 @@ fun TransitionEffect(
                         contentScale = fitMode.scale,
                         modifier = Modifier
                             .matchParentSize()
-                            .graphicsLayer(translationX = -(1f - progress) * 1000f)
+                            .graphicsLayer(translationX = -(1f - progress) * containerWidth)
                     )
                 }
                 TransitionType.SlideUp -> {
@@ -79,7 +91,7 @@ fun TransitionEffect(
                         contentScale = fitMode.scale,
                         modifier = Modifier
                             .matchParentSize()
-                            .graphicsLayer(translationY = (1f - progress) * 1000f)
+                            .graphicsLayer(translationY = (1f - progress) * containerHeight)
                     )
                 }
                 TransitionType.SlideDown -> {
@@ -89,7 +101,7 @@ fun TransitionEffect(
                         contentScale = fitMode.scale,
                         modifier = Modifier
                             .matchParentSize()
-                            .graphicsLayer(translationY = -(1f - progress) * 1000f)
+                            .graphicsLayer(translationY = -(1f - progress) * containerHeight)
                     )
                 }
                 TransitionType.ZoomIn -> {

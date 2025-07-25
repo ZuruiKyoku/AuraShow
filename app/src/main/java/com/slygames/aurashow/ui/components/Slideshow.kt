@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.slygames.aurashow.model.TransitionType
@@ -94,12 +96,16 @@ fun Slideshow(
         TransitionEffect(
             modifier = Modifier
                 .fillMaxSize()
-                .blur(32.dp),
-            fitMode = fitMode,
+                .graphicsLayer(
+                    scaleX = 1.2f,
+                    scaleY = 1.2f
+                )
+                .blur(64.dp),
+            fitMode = FitModeNames.Crop,
             transitionType = transitionType,
             progress = if (isAnimating) progress.value else 1f,
             from = fromPainter,
-            to = toPainter
+            to = toPainter,
         )
 
         // Foreground main transition
