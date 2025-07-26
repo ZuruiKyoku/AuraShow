@@ -9,11 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -43,73 +43,66 @@ fun TransitionEffect(
             }
     ){
 
+
         // Show appropriate base image
         val basePainter = if (progress < 1f) from else to
-        Image(
-            painter = basePainter,
-            contentDescription = null,
-            contentScale = fitMode.scale,
-            modifier = Modifier.matchParentSize(),
+        DrawImageStack(
+            basePainter,
+            fitMode,
+            modifier.matchParentSize()
         )
 
         if (progress < 1f){
             when (transitionType) {
                 TransitionType.Crossfade -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(alpha = progress)
                     )
                 }
                 TransitionType.SlideLeft -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
-                            .matchParentSize()
-                            .graphicsLayer(translationX = (1f - progress) * containerWidth)
-                    )
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
+                        .matchParentSize()
+                        .graphicsLayer(translationX = (1f - progress) * containerWidth))
                 }
                 TransitionType.SlideRight -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(translationX = -(1f - progress) * containerWidth)
                     )
                 }
                 TransitionType.SlideUp -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(translationY = (1f - progress) * containerHeight)
                     )
                 }
                 TransitionType.SlideDown -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(translationY = -(1f - progress) * containerHeight)
                     )
                 }
                 TransitionType.ZoomIn -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(
                                 scaleX = progress,
@@ -119,11 +112,10 @@ fun TransitionEffect(
                     )
                 }
                 TransitionType.ZoomOut -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(
                                 scaleX = 1f + (1f - progress),
@@ -133,11 +125,10 @@ fun TransitionEffect(
                     )
                 }
                 TransitionType.RotateIn -> {
-                    Image(
+                    DrawImageStack(
                         painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(
                                 rotationZ = (1f - progress) * 360f,
@@ -146,11 +137,10 @@ fun TransitionEffect(
                     )
                 }
                 TransitionType.RotateOut -> {
-                    Image(
-                        painter = to,
-                        contentDescription = null,
-                        contentScale = fitMode.scale,
-                        modifier = Modifier
+                    DrawImageStack(
+                        to,
+                        fitMode,
+                        Modifier
                             .matchParentSize()
                             .graphicsLayer(
                                 rotationZ = progress * 360f,
@@ -167,17 +157,16 @@ fun TransitionEffect(
                                 .background(Color.Black.copy(alpha = progress * 2))
                         )
                     } else {
-                        // Second half: fade from black into next image
+                        // Second half: fade from black into next DrawImageStack
                         Box(
                             modifier = Modifier
                                 .matchParentSize()
                                 .background(Color.Black)
                         )
-                        Image(
-                            painter = to,
-                            contentDescription = null,
-                            contentScale = fitMode.scale,
-                            modifier = Modifier
+                        DrawImageStack(
+                            to,
+                            fitMode,
+                            Modifier
                                 .matchParentSize()
                                 .graphicsLayer(alpha = (progress - 0.5f) * 2)
                         )
@@ -189,11 +178,10 @@ fun TransitionEffect(
                             .matchParentSize()
                             .clipToBounds()
                     ) {
-                        Image(
-                            painter = to,
-                            contentDescription = null,
-                            contentScale = fitMode.scale,
-                            modifier = Modifier
+                        DrawImageStack(
+                            to,
+                            fitMode,
+                            Modifier
                                 .fillMaxHeight()
                                 .width(progress * 1000f.dp)
                         )
@@ -205,11 +193,10 @@ fun TransitionEffect(
                             .matchParentSize()
                             .clipToBounds()
                     ) {
-                        Image(
-                            painter = to,
-                            contentDescription = null,
-                            contentScale = fitMode.scale,
-                            modifier = Modifier
+                        DrawImageStack(
+                            to,
+                            fitMode,
+                            Modifier
                                 .fillMaxWidth()
                                 .height(progress * 1000f.dp)
                         )
@@ -218,4 +205,31 @@ fun TransitionEffect(
             }
         }
     }
+}
+
+@Composable
+fun DrawImageStack(
+    painter: Painter,
+    fitMode: FitModeNames,
+    modifier: Modifier = Modifier,
+){
+    Image(
+        painter = painter,
+        contentDescription = null,
+        contentScale = FitModeNames.Crop.scale,
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer(
+                scaleX = 1.2f,
+                scaleY = 1.2f
+            )
+            .blur(24.dp)
+            .then(modifier)
+    )
+    Image(
+        painter = painter,
+        contentDescription = null,
+        contentScale = fitMode.scale,
+        modifier = modifier,
+    )
 }

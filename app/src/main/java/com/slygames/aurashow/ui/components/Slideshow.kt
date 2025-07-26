@@ -93,20 +93,20 @@ fun Slideshow(
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Background blurred layer
-        TransitionEffect(
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer(
-                    scaleX = 1.2f,
-                    scaleY = 1.2f
-                )
-                .blur(64.dp),
-            fitMode = FitModeNames.Crop,
-            transitionType = transitionType,
-            progress = if (isAnimating) progress.value else 1f,
-            from = fromPainter,
-            to = toPainter,
-        )
+//        TransitionEffect(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .graphicsLayer(
+//                    scaleX = 1.2f,
+//                    scaleY = 1.2f
+//                )
+//                .blur(64.dp),
+//            fitMode = FitModeNames.Crop,
+//            transitionType = transitionType,
+//            progress = if (isAnimating) progress.value else 1f,
+//            from = fromPainter,
+//            to = toPainter,
+//        )
 
         // Foreground main transition
         TransitionEffect(
