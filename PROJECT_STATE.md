@@ -1,6 +1,6 @@
 # PROJECT_STATE — AuraShow
 
-Last reviewed: **2026-10-12 (America/New_York)**. Continuity schema: **1**.
+Last reviewed: **2026-10-13 (America/New_York)**. Continuity schema: **1**.
 
 This is a maintained project handoff, not an assertion that every historical chat or runtime behavior has been verified. Recheck Git and source at session start. Architecture and feature notes below describe the audited local project unless explicitly labeled remote default.
 
@@ -14,17 +14,15 @@ Kotlin Android app; slideshow and weather view models, preferences, Compose-styl
 
 ## Decisions and workflow
 
+- Current authorization (2026-10-13): user explicitly requested consolidating these project branches into main and deleting the old branches. This supersedes earlier backup-only/no-merge restrictions for this consolidation. It does not authorize deployment, personal-data changes, or claiming unperformed runtime acceptance.
+
 - Keep weather credentials outside committed source.
 - Treat README architectural pillars as intended scope until confirmed by implementation and runtime checks.
-- Preserve existing acceptance gates and uncommitted work. The 2026-10-12 authorization covers continuity documentation branches only, not merging features, deploying, or pushing unrelated code.
+- Historical authorization, superseded for consolidation: Preserve existing acceptance gates and uncommitted work. The 2026-10-12 authorization covers continuity documentation branches only, not merging features, deploying, or pushing unrelated code.
 
 ## Current status
 
-- Local working branch at audit: `main`; code snapshot `741c7392a27ca8e548442fec1e43dd4473699cd0`.
-- Pre-existing working-tree changes: **0** entries. These were not staged, committed or discarded by continuity setup.
-- Live GitHub default: `main` at `741c7392a27ca8e548442fec1e43dd4473699cd0`.
-- Continuity documentation was prepared from the reviewed `main` baseline. This documentation-only delivery includes no feature-branch implementation.
-- Repository: https://github.com/ZuruiKyoku/AuraShow (public).
+2026-10-13 main consolidation: verified source from `main` at `61f0039a47fbd399ecdf7a5a95dd8f7564f6ec33` is promoted to `main` in https://github.com/ZuruiKyoku/AuraShow. Application source is unchanged by consolidation. All previously advertised branches are preserved in main ancestry before deletion; main becomes the default and sole remote branch. The task receipt records the final commit and remote verification. Prior source-backup exclusions remain in force. Local private/generated data is retained on disk. Runtime acceptance gaps below remain open.
 
 ## Completed work
 
@@ -54,6 +52,8 @@ These are source/history findings; historical test reports are labeled and are n
 
 ## Verification and evidence
 
+**Main consolidation (2026-10-13):** all old remote branch tips checked for ancestry; merged tree checked against the verified source snapshot with only continuity documentation allowed to differ. Remote main/default/branch-deletion checks are recorded in the final task receipt. Existing build/runtime evidence below is historical; no application code was changed by consolidation.
+
 - This session verified repository identity, local Git metadata/tracked paths, live remote refs where configured, and inspected documentation/source evidence. It changed documentation only.
 - No application build, unit-test suite, device test, deployment check or live-service test is implied by this audit. Prior successful checks do not validate later uncommitted edits.
 - Evidence labels: **source present** is static evidence; **historical report** is a past session claim; **verified now** requires an explicitly recorded current check; **planned/unknown** is not implemented.
@@ -69,8 +69,4 @@ No directly associated local coding transcript was found in the reviewed invento
 
 ## Session handoff
 
-- Last task (2026-10-12): deliver the continuity documentation to the existing remote default branch `main`, as explicitly authorized by the user. Application changes and feature acceptance remain separate.
-- Documentation scope: preserve all pre-existing code, assets, branches, indexes and acceptance gates. A documentation branch does not back up uncommitted application work.
-- Publication evidence: original documentation commit `7f5f831828063ee3ee615f2aeb0192e27e201d38`; delivery targets `main` by normal fast-forward push. Confirm inclusion with Git ancestry; the external continuity report records the post-push remote SHA. Original local checkouts are not pulled or switched during delivery.
-- Next owner: follow Next steps above, fill historical gaps, and replace stale status with dated evidence after meaningful work.
-- Archive readiness: incomplete history and any local-only implementation still need reconciliation; do not infer that archiving all project chats is lossless.
+User authorized merge/promotion to main and deletion of old branches on 2026-10-13. Canonical destination: https://github.com/ZuruiKyoku/AuraShow, main. Source baseline: 61f0039a47fbd399ecdf7a5a95dd8f7564f6ec33. Existing branch histories are included before deletion; the application tree remains the verified source snapshot. Local checkout alignment must preserve original file bytes except this handoff, as well as private/generated files. For Prioritizer and the Godot prototype, the private snapshot repository stays canonical; original public repositories are not modified. No deployment or new feature phase is started. Consult Known issues and gaps for outstanding manual/runtime checks; branch consolidation is not proof that those passed.
